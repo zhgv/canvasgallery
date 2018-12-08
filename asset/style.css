@@ -1,0 +1,50 @@
+html, body{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0
+}
+body{
+    display: flex
+}
+.name{
+	
+	font-family: 华文行楷;
+	font-size: 23px;
+	
+}
+.list{
+    height: 100%;
+    width: 150px;
+    border-right: 1px solid white;
+    overflow: auto;
+}
+.content{
+    height: 100%;
+    width: 100%;
+    border: none;
+    outline: none;
+    overflow: auto;
+}
+.item{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 50px;
+    border-bottom: 4px solid #35d0ba;
+    cursor: pointer;
+    transition: .3s ease;
+}
+.item:hover{
+    background: #ebf0f6
+}
+.marker{
+    width: 8px;
+    height: 100%;
+    background: #ff9234;
+    margin-right: 15px;
+    transition: .3s ease;
+}
+.item-active .marker{
+    background: #ffcd3c
+}

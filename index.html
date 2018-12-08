@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Canvas+CSS画廊</title>
+    <script src="./asset/tinyJquery.min.js"></script>
+    <link rel="stylesheet" href="./asset/style.css">
+</head>
+<body>
+    <div class="list">
+        
+    </div>
+    <iframe class="content"></iframe>
+    
+    <script>
+        const list = [
+		{
+		  name: '风铃线',
+		  src: './src/row.html'
+		},
+		{
+		   name: '音乐彩带',
+		   src: './src/music.html'
+		},
+		{
+            name: '渐变背景',
+            src: './src/background.html'
+        }, 
+		{
+            name: '多啦A梦',
+            src: './src/Doraemon.html'
+        }, {
+            name: '文字气泡',
+            src: './src/font-circle.html'
+        }, {
+            name: '神秘星空',
+            src: './src/StarSky.html'
+        }, {
+            name: '简短说明',
+            src: './src/introduce.html'
+        }]
+        function item({name, src}) {
+            return `
+                <div class='item' data-src="${src}">
+                    <div class="marker"></div>
+                    <div class="name">${name}</div>
+                </div>
+            `
+        }
+        let html = ''
+        list.forEach(v => {
+            html += item(v)
+        })
+        $('.list').html(html)
+        $('.item').eq(0).ac('item-active')
+        $('.content').attr('src', $('.item').eq(0).data('src'))
+        $('.item').on('click', function() {
+            $('.item').rc('item-active')
+            $(this).ac('item-active')
+            $('.content').attr('src', $(this).data('src'))
+        })
+    </script>
+</body>
+</html>

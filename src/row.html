@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	
+</head>
+
+<body>
+<canvas id="canvas" style="display: block; margin: 0; position: absolute; padding: 0; left: 0; top: 0;"></canvas>
+<script>var gravity = 0.1;
+var damping = 0.01;
+var drawPoints = true;
+
+var down = false;
+var currNode = null;
+var nodes = [];
+for (var i = 0; i < 10; i++) {
+    nodes.push(new Node(i * 200 + 50, 50, i == 0 || i == 9));
+}
+
+var canvas = document.getElementById("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+var ctx = canvas.getContext("2d");
+
+animLoop();
+
+addEventListener("mousedown", downHandler, true);
+addEventListener("mouseup", upHandler, true);
+addEventListener("mousemove", moveHandler, true);
+addEventListener("keyup", keyUpHandler, true);
+
+function downHandler(event) {
+    down = true;
+    for (var i = 0; i < nodes.length; i++) {
+        var manhattan = Math.abs(nodes[i].x - event.pageX) + Math.abs(nodes[i].y - event.pageY);
+        console.log(manhattan);
+        if (manhattan < 50) {
+            currNode = nodes[i];
+            break;
+        }
+    }
+    event.preventDefault();
+}
+
+function upHandler(event) {
+    down = false;
+    currNode = null;
+    event.preventDefault();
+}
+
+function moveHandler(event) {
+    if (down && currNode != null) {
+        currNode.x = event.pageX;
+        currNode.y = event.pageY;
+    }
+}
+
+function keyUpHandler(event) {
+    event.preventDefault();
+    if (down && currNode != null && event.keyCode == 32) {
+        currNode.fixed = !(currNode.fixed);
+    }
+    return false;
+}
+
+function drawNodes() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < nodes.length; i++) {
+        if (i != nodes.length - 1) {
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[i + 1].x, nodes[i + 1].y);
+            ctx.stroke();
+        }
+        if (drawPoints) {
+            ctx.fillStyle = (nodes[i].fixed ? '#f7de1c' : '#503bff');
+            ctx.fillRect(nodes[i].x - 5, nodes[i].y - 5, 10, 10);
+        }
+    }
+}
+
+function updateNodeState() {
+    for (var i = 0; i < nodes.length; i++) {
+        if (currNode != nodes[i]) {
+            if (!nodes[i].fixed) {
+                nodes[i].vx += nodes[i].ax - damping * nodes[i].vx;
+                nodes[i].vy += nodes[i].ay - damping * nodes[i].vy;
+                nodes[i].x += nodes[i].vx;
+                nodes[i].y += nodes[i].vy;
+            } else {
+                nodes[i].vx = 0;
+                nodes[i].vy = 0;
+                nodes[i].ax = 0;
+                nodes[i].ay = 0;
+            }
+        }
+    }
+}
+
+function clearForces(i) {
+    nodes[i].ax = 0;
+    nodes[i].ay = 0;
+}
+
+function calcForces(i, offset) {
+    if ((i + offset) >= 0 && (i + offset) < nodes.length) {
+        var diff_x = nodes[i].x - nodes[i + offset].x;
+        var diff_y = nodes[i].y - nodes[i + offset].y;
+        nodes[i].ax += -0.01 * diff_x;
+        nodes[i].ay += -0.01 * diff_y + gravity;
+        //console.log(nodes[i].vx + " " + nodes[i].vy + " " + nodes[i].ax + " " + nodes[i].ay);
+    }
+}
+
+function animLoop() {
+    requestAnimationFrame(animLoop);
+
+    for (var i = 0; i < nodes.length; i++) {
+        if (!(nodes[i].fixed)) {
+            clearForces(i);
+            calcForces(i, 1);
+            calcForces(i, -1);
+        }
+    }
+
+    updateNodeState();
+    drawNodes();
+}
+
+function Node(x, y, fixed) {
+    this.x = x;
+    this.y = y;
+    this.fixed = fixed;
+    this.vx = 0;
+    this.vy = 0;
+    this.ax = 0;
+    this.ay = 0;
+}</script>
+</body>
+</html>
